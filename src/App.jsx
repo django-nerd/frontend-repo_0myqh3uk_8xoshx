@@ -3,14 +3,18 @@ import Hero from './components/Hero'
 import Features from './components/Features'
 import HowItWorks from './components/HowItWorks'
 import CTA from './components/CTA'
+import Auth from './components/Auth'
+import Dashboard from './components/Dashboard'
 import { Bus } from 'lucide-react'
 
 export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [session, setSession] = useState(null)
 
   const navItems = [
     { href: '#features', label: 'Features' },
     { href: '#how', label: 'How it works' },
+    { href: '#signin', label: 'Sign in' },
     { href: '#contact', label: 'Contact' },
   ]
 
@@ -36,12 +40,22 @@ export default function App() {
                 {n.label}
               </a>
             ))}
-            <a
-              href="#contact"
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-neutral-950 transition hover:bg-orange-400"
-            >
-              Get Started
-            </a>
+            {!session && (
+              <a
+                href="#signin"
+                className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-neutral-950 transition hover:bg-orange-400"
+              >
+                Get Started
+              </a>
+            )}
+            {session && (
+              <button
+                onClick={() => setSession(null)}
+                className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
+              >
+                Sign out
+              </button>
+            )}
           </nav>
 
           <button
@@ -68,13 +82,23 @@ export default function App() {
                     {n.label}
                   </a>
                 ))}
-                <a
-                  href="#contact"
-                  className="rounded-md bg-orange-500 px-3 py-2 text-center text-sm font-medium text-neutral-950 hover:bg-orange-400"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Get Started
-                </a>
+                {!session && (
+                  <a
+                    href="#signin"
+                    className="rounded-md bg-orange-500 px-3 py-2 text-center text-sm font-medium text-neutral-950 hover:bg-orange-400"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Get Started
+                  </a>
+                )}
+                {session && (
+                  <button
+                    onClick={() => { setSession(null); setMobileOpen(false) }}
+                    className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-center text-sm font-medium text-white hover:bg-white/10"
+                  >
+                    Sign out
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -86,6 +110,11 @@ export default function App() {
         <Hero />
         <Features />
         <HowItWorks />
+        {!session ? (
+          <Auth onSignedIn={(data)=> setSession(data)} />
+        ) : (
+          <Dashboard session={session} onSignOut={() => setSession(null)} />
+        )}
         <section id="contact">
           <CTA />
         </section>
@@ -98,6 +127,7 @@ export default function App() {
           <div className="flex items-center gap-4">
             <a href="#features" className="hover:text-white">Features</a>
             <a href="#how" className="hover:text-white">How it works</a>
+            <a href="#signin" className="hover:text-white">Sign in</a>
             <a href="#contact" className="hover:text-white">Contact</a>
           </div>
         </div>
